@@ -1,20 +1,18 @@
 # Guia de uso
 
-Adapter opcional de cache APCu para o framework Elavora.
-
 ## Instalacao
 
 ```bash
-composer require elavora/api-cache-apcu
+composer require elavora/api-cache-apcu:^1.0
 ```
 
-## Quando usar
+Requisitos de runtime:
 
-- Registrar um backend de cache para o contrato do framework.
-- Evitar acoplamento da aplicacao a APCu ou Redis diretamente.
-- Centralizar prefixo e TTL usados pela aplicacao.
+- PHP `>=8.3`
+- `ext-apcu`
+- `elavora/api-framework` `^1.0`
 
-## Exemplo rapido
+## Registro
 
 ```php
 use Elavora\Api\Extension\CacheApcu\ApcuCacheExtension;
@@ -25,27 +23,20 @@ $application->extend(new ApcuCacheExtension([
 ]));
 ```
 
-## Principais pontos de entrada
+Sem `ttl`, os valores nao expiram. Um TTL explicito em `set()` prevalece sobre
+o padrao. TTL zero ou negativo remove a entrada.
 
-- `Elavora\Api\Extension\CacheApcu\ApcuCache`
-- `Elavora\Api\Extension\CacheApcu\ApcuCacheExtension`
+## Qualidade
 
-## Dependencias de runtime
-
-- `ext-apcu` `*`
-- `elavora/api-framework` `^0.3.1`
-
-## Validacao no projeto consumidor
-
-Depois de instalar o pacote, rode os testes da aplicacao consumidora. Para uma verificacao isolada do pacote, use container:
+Os comandos nao dependem de Bash, `find` ou `xargs`:
 
 ```bash
-docker run --rm -v "${PWD}:/workspace" -w "/workspace/api-cache-apcu" composer:2 composer validate --strict --no-check-publish
-docker run --rm -v "${PWD}:/workspace" -w "/workspace/api-cache-apcu" composer:2 sh -lc "find . \\( -path ./.git -o -path ./vendor \\) -prune -o -name '*.php' -print0 | xargs -0 -r -n1 php -l"
+composer validate --strict --no-check-publish
+composer lint
+composer analyse
+composer test
+composer check
 ```
 
-## Observacoes
-
-- Mantenha regras de produto fora deste pacote.
-- Prefira configurar extensoes no bootstrap da aplicacao.
-- Instale apenas os modulos que a aplicacao realmente usa.
+`composer test` habilita APCu na CLI. `composer check` executa lint portatil,
+PHPStan nivel 8 e PHPUnit.
