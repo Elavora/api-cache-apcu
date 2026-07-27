@@ -1,0 +1,18 @@
+name: Release
+
+on:
+  pull_request:
+    branches: [main]
+    types: [closed]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: github.event.pull_request.merged == true
+    uses: Elavora/.github/.github/workflows/release.yml@25847f99eb9de9d7ddb4280700f9cfb025f34db2
+    with:
+      package_name: elavora/api-cache-apcu
+      automation_ref: 25847f99eb9de9d7ddb4280700f9cfb025f34db2
+    secrets: inherit
