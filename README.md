@@ -2,13 +2,13 @@
 
 Adapter opcional de cache APCu para o framework Elavora.
 
-O pacote requer a extensao PHP `apcu`. Em execucoes pela CLI, habilite
-`apc.enable_cli=1` quando o cache precisar estar ativo.
+## Requisitos
 
-Registre `ApcuCacheExtension` com as opcoes `prefix` e `ttl`. Sem `ttl`, os
-itens permanecem armazenados sem expiracao, como no adapter Redis modular.
-Defina `ttl` como `3600` para reproduzir o tempo padrao da integracao APCu
-anterior.
+- PHP `>=8.3`
+- `ext-apcu`
+- `elavora/api-framework` `^1.0`
+
+Em execucoes pela CLI, habilite `apc.enable_cli=1`.
 
 ```php
 use Elavora\Api\Extension\CacheApcu\ApcuCacheExtension;
@@ -19,6 +19,7 @@ $application->extend(new ApcuCacheExtension([
 ]));
 ```
 
-O pacote implementa `Elavora\Api\Framework\Contracts\CacheStore`. Registre
-somente uma extensao de cache na aplicacao, pois os adapters de cache
-compartilham esse contrato.
+Sem `ttl`, os itens permanecem sem expiracao. TTL zero ou negativo remove a
+entrada.
+
+Consulte [docs/USO.md](docs/USO.md) para os comandos de qualidade.
