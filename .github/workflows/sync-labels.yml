@@ -12,8 +12,8 @@ permissions:
 jobs:
   sync:
     name: Sync Labels
-    uses: Elavora/.github/.github/workflows/sync-labels.yml@25847f99eb9de9d7ddb4280700f9cfb025f34db2
+    uses: Elavora/.github/.github/workflows/sync-labels.yml@3b7dadedc2f7559cd3ce307904175412b1b2d595
     with:
-      automation_ref: 25847f99eb9de9d7ddb4280700f9cfb025f34db2
+      automation_ref: 3b7dadedc2f7559cd3ce307904175412b1b2d595
       prune: false
     secrets: inherit
