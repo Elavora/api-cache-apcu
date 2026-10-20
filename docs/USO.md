@@ -205,12 +205,22 @@ porque todos usam o mesmo contrato `CacheStore`.
 
 ## Validação local
 
-Os testes rodam no container `ghcr.io/elavora/php-dev:8.3-latest`, montando o
-repositório em `/origem` (PowerShell, na raiz do repo):
+Os testes rodam no container `ghcr.io/elavora/php-dev:8.3-latest`. Essa imagem
+não traz a extensão `apcu`, então o comando abaixo a instala no container
+efêmero antes de rodar os testes. Rode no PowerShell, na raiz do repo:
 
 ```powershell
-docker run --rm -v "${PWD}:/origem" -w /origem ghcr.io/elavora/php-dev:8.3-latest sh -lc "composer install --no-interaction && composer validate --strict --no-check-publish && composer test"
+docker run --rm -v "${PWD}:/origem:ro" ghcr.io/elavora/php-dev:8.3-latest sh -lc 'set -e; printf "\n" | sudo pecl install apcu >/dev/null; echo "extension=apcu.so" | sudo tee "$(php -r "echo PHP_CONFIG_FILE_SCAN_DIR;")/apcu.ini" >/dev/null; git config --global --add safe.directory "*"; git clone -q /origem "$HOME/w"; cd "$HOME/w"; composer install -q --no-interaction; composer validate --strict --no-check-publish; composer test'
 ```
+
+O que o comando faz:
+
+1. Instala `apcu` com `pecl` e liga a extensão por um arquivo `.ini`.
+2. Libera o repositório montado no `safe.directory` do git (o dono dos
+   arquivos é diferente do usuário do container).
+3. Clona `/origem` em `$HOME/w`, para não gravar `vendor/` no seu repositório.
+   O clone usa a branch atual e só enxerga o que já está commitado.
+4. Instala as dependências, valida o `composer.json` e roda os testes.
 
 O script `composer test` já liga `apc.enable_cli=1`.
 
