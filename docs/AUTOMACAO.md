@@ -415,6 +415,11 @@ depois de `:` e sem sequências `\uXXXX` (por exemplo, `">=8.3"`, e não `">=8.3
 ```json
 {
   "name": "elavora/<repo>",
+  "require": {
+    "php": ">=8.3",
+    "ext-apcu": "*",
+    "elavora/api-framework": "^2.0"
+  },
   "require-dev": {
     "elavora/code-standards": "^1.1",
     "phpstan/phpstan": "^2.2",
@@ -434,6 +439,11 @@ depois de `:` e sem sequências `\uXXXX` (por exemplo, `">=8.3"`, e não `">=8.3
   },
   "config": {
     "sort-packages": true
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-main": "1.0-dev"
+    }
   }
 }
 ```
@@ -441,9 +451,22 @@ depois de `:` e sem sequências `\uXXXX` (por exemplo, `">=8.3"`, e não `">=8.3
 O exemplo mostra só as chaves que este PR cria ou muda. As demais (`description`, `type`, `license`, `autoload`)
 continuam como estão, na ordem atual.
 
-- As chaves `require` (`php`, `ext-apcu`, `elavora/api-framework`) e `extra` não mudam por causa do pipeline.
+- **Este PR também é o upgrade para o framework 2.** Antes, `php` era `>=8.1` e `elavora/api-framework` era `^0.3.1 || ^0.4.0`.
+  Agora `php` é `>=8.3` (o que o framework 2 exige) e `elavora/api-framework` é `^2.0`. Não existe `^0.3`, `^1.0`
+  nem uma união como `^1.0 || ^2.0` em `require`.
 - `ext-apcu` continua em `require` (`*`), sem mudança. A imagem `ghcr.io/elavora/php-dev:8.3-latest` (a partir da 0.4.0) já traz a extensão `apcu` e o `apc.enable_cli = 1`, então o `composer install` e os testes rodam no CI sem instalar nada. O pacote não precisa de rede nem de servidor ([Desenvolvimento e testes](DESENVOLVIMENTO.md#extensão-apcu-nos-testes)).
-- Os ajustes do PHPStan (nível 8, sem `baseline`) e do estilo PER-CS vão em commits próprios e não mudam o comportamento.
+- `extra.branch-alias`: `dev-main` passa de `0.1-dev` para `1.0-dev`, o major que o merge publica
+  ([Versões e release](#versões-e-release)).
+- O `src/` não muda de comportamento. O namespace `Elavora\Api\Extension\CacheApcu` e as duas classes públicas,
+  `ApcuCache` e `ApcuCacheExtension`, mantêm assinaturas e regras (veja
+  [Versão e compatibilidade](USO.md#versão-e-compatibilidade)). `ApcuCache` implementa
+  `Elavora\Api\Framework\Contracts\CacheStore` e a extensão implementa `Elavora\Api\Framework\Contracts\Extension` e
+  usa `Elavora\Api\Framework\Application`. No framework `0.x` que o `composer install` resolve na `main`, a interface
+  `CacheStore` não existe nesse namespace, e por isso os 4 testes da `main` falham com `Interface
+  "Elavora\Api\Framework\Contracts\CacheStore" not found`: a causa é a dependência, e o upgrade resolve (com o
+  framework 2.0.0, a suíte passa inteira sem mexer no `src/`).
+- Os ajustes do PHPStan (nível 8, sem `baseline`) e do estilo PER-CS vão em commits próprios e não mudam o
+  comportamento.
 
 - `elavora/code-standards` fica em `require-dev`, nunca em `require`. A restrição é `^1.` seguido do minor (1 ou
   maior) e, opcionalmente, do patch. O minor mínimo é 1 porque o subcomando `lint` só existe a partir da 1.1.0, e o CI
@@ -837,8 +860,15 @@ As regras completas estão no `Elavora/.github`: [versionamento](https://github.
 - Só o último PR de uma série de mudanças leva `release`.
 
 **Neste repositório:** as tags são legadas (`v0.1.0`, `v0.1.1`, `v0.2.0`, `v0.3.0` e `v0.3.1`), e a última é a `v0.3.1`, que conta como a
-estável `0.3.1`. O `release.yml` novo roda no merge, e o `tag_on_merge.yml` antigo já não existe nele, então sai uma
-release só.
+estável `0.3.1`. Um único PR faz o upgrade para o `elavora/api-framework` `^2.0` e adota o pipeline. Ele é o último
+PR da série e leva as labels `upgrade` (major) e `release` (estável), então o merge gera a estável **`1.0.0`**
+(`0.3.1` com major). O `release.yml` novo roda no merge desse mesmo PR, e o `tag_on_merge.yml` antigo já não existe
+nele, então sai uma release só.
+
+O PR tem commits separados por assunto: `docs`, `test`, `ci`/`build` (pipeline), `style` (PER-CS), `feat!` (upgrade:
+PHP, framework e `branch-alias`) e as correções do PHPStan. O título é
+`feat!: atualiza para o framework 2 e adota o pipeline central`. Ele reúne os dois assuntos porque o pipeline sozinho
+não teria CI verde (a suíte já falha na `main`) e o upgrade sozinho dispararia os workflows antigos.
 
 O Packagist é avisado pelo `release.yml` a cada release, com o secret `PACKAGIST_WEBHOOK_URL`. O pacote só fica
 disponível na versão nova depois dessa notificação.
@@ -853,7 +883,7 @@ como texto ou JSON. Os arquivos `.cjs` não são PHP: o PHPUnit e o `composer li
 | `workflows.test.cjs` | os seis workflows contra os blocos desta página, o formato das referências e as regras gerais |
 | `dependabot.test.cjs` | o `dependabot.yml` exato, as labels, o prefixo dos commits e o grupo do CodeQL |
 | `devcontainer.test.cjs` | o `devcontainer.json` exato e a imagem `8.3-latest` |
-| `estilo.test.cjs` | o `composer.json` (pacote em `require-dev`, restrição, scripts), o stub do PHP-CS-Fixer, os marcadores do `.editorconfig`, o `.gitignore` e o `.gitattributes` |
+| `estilo.test.cjs` | o `composer.json` (`php` `>=8.3`, `elavora/api-framework` `^2.0`, `branch-alias` `1.0-dev`, pacote em `require-dev`, restrição, scripts), o stub do PHP-CS-Fixer, os marcadores do `.editorconfig`, o `.gitignore` e o `.gitattributes` |
 | `phpunit.test.cjs` | o `phpunit.xml` exato (bloco `<source>`, `cacheDirectory`, `failOnWarning`) |
 | `removidos.test.cjs` | os arquivos que não podem existir |
 | `_helpers.cjs` | funções comuns (leitura de arquivos, normalização das referências) |

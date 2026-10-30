@@ -6,15 +6,22 @@
 [![CodeQL](https://github.com/Elavora/api-cache-apcu/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/Elavora/api-cache-apcu/actions/workflows/codeql.yml)
 [![License](https://img.shields.io/packagist/l/elavora/api-cache-apcu.svg?style=flat-square)](LICENSE)
 
-Adapter opcional de cache APCu para o framework Elavora.
+Adapter opcional de cache APCu para o framework Elavora 2
+(`elavora/api-framework` `^2.0`, PHP `>=8.3`).
 
 O pacote requer a extensão PHP `apcu`. Em execuções pela CLI, habilite
 `apc.enable_cli=1` quando o cache precisar estar ativo.
 
+## Uso pelo ambiente
+
+Com o bootstrap do framework 2, basta instalar o pacote e definir
+`CACHE_DRIVER=apcu`. `CACHE_PREFIX` e `CACHE_TTL` são opcionais.
+
+## Registro manual
+
 Registre `ApcuCacheExtension` com as opções `prefix` e `ttl`. Sem `ttl`, os
-itens permanecem armazenados sem expiração, como no adapter Redis modular.
-Defina `ttl` como `3600` para reproduzir o tempo padrão da integração APCu
-anterior.
+itens ficam guardados sem expiração. Use `ttl` `3600` para reproduzir o tempo
+padrão da integração APCu antiga.
 
 ```php
 use Elavora\Api\Extension\CacheApcu\ApcuCacheExtension;
@@ -29,7 +36,19 @@ O pacote implementa `Elavora\Api\Framework\Contracts\CacheStore`. Registre
 somente uma extensão de cache na aplicação, pois os adapters de cache
 compartilham esse contrato.
 
-Mais exemplos: [docs/USO.md](docs/USO.md).
+Especificação completa, exemplos e regras de TTL: [docs/USO.md](docs/USO.md).
+
+## Instalação
+
+```bash
+composer require elavora/api-cache-apcu
+```
+
+Requisitos: PHP 8.3 ou superior, extensão `apcu` e `elavora/api-framework` `^2.0`.
+
+Versão `1.0`: atualiza o pacote para o `elavora/api-framework` 2.0, que substitui o `^0.3.1 || ^0.4.0`, e sobe o PHP
+mínimo de 8.1 para 8.3. A API do pacote não muda; quem usa o framework `0.x` precisa atualizar junto (veja o
+[guia de migração](docs/USO.md#versão-e-compatibilidade)).
 
 ## Desenvolvimento e testes
 
@@ -69,12 +88,12 @@ estão em [Desenvolvimento e testes](docs/DESENVOLVIMENTO.md).
 ## Versões
 
 Cada PR integrado na `main` gera uma versão automaticamente, conforme as labels do PR: sem a label `release` sai uma
-beta (`0.3.2-beta.1`), com ela sai a estável (`0.3.2`). As tags novas não têm o prefixo `v`, e as notas de cada
+beta (`1.0.1-beta.1`), com ela sai a estável (`1.0.1`). As tags novas não têm o prefixo `v`, e as notas de cada
 GitHub Release são geradas em português a partir dos PRs. Veja [Versões e release](docs/AUTOMACAO.md#versões-e-release).
 
 ## Documentação
 
-1. [Guia de uso](docs/USO.md): o uso do pacote e a API pública.
+1. [Guia de uso](docs/USO.md): a especificação do pacote, com a API pública, as regras de TTL, a configuração e a migração.
 2. [Desenvolvimento e testes](docs/DESENVOLVIMENTO.md): ambiente, como rodar os testes e o que roda no CI.
 3. [Automação do repositório](docs/AUTOMACAO.md): workflows, Dependabot, estilo de código, labels e versões.
 
