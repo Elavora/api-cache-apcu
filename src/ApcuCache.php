@@ -14,9 +14,8 @@ final class ApcuCache implements CacheStore
      */
     public function __construct(
         private readonly string $prefix = '',
-        private readonly ?int $defaultTtlSeconds = null
-    ) {
-    }
+        private readonly ?int $defaultTtlSeconds = null,
+    ) {}
 
     /**
      * Recupera um valor do cache APCu.
