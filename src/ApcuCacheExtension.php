@@ -13,9 +13,7 @@ final class ApcuCacheExtension implements Extension
     /**
      * @param array{prefix?: string, ttl?: int|null} $config
      */
-    public function __construct(private readonly array $config = [])
-    {
-    }
+    public function __construct(private readonly array $config = []) {}
 
     /**
      * Registra o cache APCu como CacheStore.
@@ -24,12 +22,12 @@ final class ApcuCacheExtension implements Extension
     {
         $application->container()->bind(
             CacheStore::class,
-            fn (): ApcuCache => new ApcuCache(
+            fn(): ApcuCache => new ApcuCache(
                 prefix: (string) ($this->config['prefix'] ?? ''),
                 defaultTtlSeconds: array_key_exists('ttl', $this->config)
                     ? ($this->config['ttl'] === null ? null : (int) $this->config['ttl'])
-                    : null
-            )
+                    : null,
+            ),
         );
     }
 }
