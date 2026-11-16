@@ -16,12 +16,12 @@ composer require elavora/api-cache-apcu
 
 | Dependência             | Versão  |
 |-------------------------|---------|
-| `php`                   | `>=8.3` |
+| `php`                   | `>=8.4` |
 | `ext-apcu`              | `*`     |
 | `elavora/api-framework` | `^2.0`  |
 
 O pacote não aceita mais o framework `0.x` nem o `1.x`. A versão mínima do PHP
-acompanha o framework 2, que exige PHP 8.3.
+acompanha o framework 2, que exige PHP 8.4.
 
 Em execuções pela CLI (testes, workers), o APCu só guarda valores com
 `apc.enable_cli=1`.
@@ -213,7 +213,7 @@ A versão `1.0` exige PHP `>=8.3` e `elavora/api-framework` `^2.0`. Antes (`0.x`
 ```json
 {
   "require": {
-    "php": ">=8.3",
+    "php": ">=8.4",
     "elavora/api-framework": "^2.0",
     "elavora/api-cache-apcu": "^1.0"
   }
@@ -230,12 +230,12 @@ O `extra.branch-alias` do pacote passa de `0.1-dev` para `1.0-dev` (`dev-main`).
 
 ## Validação local
 
-Os testes rodam no container `ghcr.io/elavora/php-dev:8.3-latest`. Essa imagem (a partir da 0.4.0) já traz a extensão
+Os testes rodam no container `ghcr.io/elavora/php-dev:8.4-latest`. Essa imagem (a partir da 0.4.0) já traz a extensão
 `apcu` e o `apc.enable_cli = 1`, então não é preciso instalar nada. Rode no PowerShell, na raiz do repo, depois de
 commitar (o clone pega só o que está commitado):
 
 ```powershell
-docker run --rm -v "$($PWD.Path):/origem:ro" ghcr.io/elavora/php-dev:8.3-latest sh -lc 'git config --global --add safe.directory "*" && git clone -q /origem /tmp/repo && cd /tmp/repo && composer install --no-interaction --prefer-dist && composer validate --strict --no-check-publish && composer test'
+docker run --rm -v "$($PWD.Path):/origem:ro" ghcr.io/elavora/php-dev:8.4-latest sh -lc 'git config --global --add safe.directory "*" && git clone -q /origem /tmp/repo && cd /tmp/repo && composer install --no-interaction --prefer-dist && composer validate --strict --no-check-publish && composer test'
 ```
 
 O comando clona `/origem` em `/tmp/repo` (para não gravar `vendor/` no seu repositório), instala as dependências,

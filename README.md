@@ -7,7 +7,7 @@
 [![License](https://img.shields.io/packagist/l/elavora/api-cache-apcu.svg?style=flat-square)](LICENSE)
 
 Adapter opcional de cache APCu para o framework Elavora 2
-(`elavora/api-framework` `^3.0`, PHP `>=8.3`).
+(`elavora/api-framework` `^4.1`, PHP `>=8.4`).
 
 O pacote requer a extensão PHP `apcu`. Em execuções pela CLI, habilite
 `apc.enable_cli=1` quando o cache precisar estar ativo.
@@ -44,7 +44,7 @@ Especificação completa, exemplos e regras de TTL: [docs/USO.md](docs/USO.md).
 composer require elavora/api-cache-apcu
 ```
 
-Requisitos: PHP 8.3 ou superior, extensão `apcu` e `elavora/api-framework` `^3.0`.
+Requisitos: PHP 8.4 ou superior, extensão `apcu` e `elavora/api-framework` `^4.1`.
 
 Versão `1.0`: atualiza o pacote para o `elavora/api-framework` 2.0, que substitui o `^0.3.1 || ^0.4.0`, e sobe o PHP
 mínimo de 8.1 para 8.3. A API do pacote não muda; quem usa o framework `0.x` precisa atualizar junto (veja o
@@ -52,11 +52,11 @@ mínimo de 8.1 para 8.3. A API do pacote não muda; quem usa o framework `0.x` p
 
 ## Desenvolvimento e testes
 
-Você só precisa de Docker. O ambiente é a imagem `ghcr.io/elavora/php-dev:8.3-latest`: abra o repositório no VS Code
+Você só precisa de Docker. O ambiente é a imagem `ghcr.io/elavora/php-dev:8.4-latest`: abra o repositório no VS Code
 com **Dev Containers: Reopen in Container**, ou rode no PowerShell:
 
 ```powershell
-docker run --rm --mount "type=bind,source=$($PWD.Path),target=/workspace" -w /workspace ghcr.io/elavora/php-dev:8.3-latest sh -lc 'git config --global --add safe.directory /workspace && composer install --no-interaction --prefer-dist && composer check'
+docker run --rm --mount "type=bind,source=$($PWD.Path),target=/workspace" -w /workspace ghcr.io/elavora/php-dev:8.4-latest sh -lc 'git config --global --add safe.directory /workspace && composer install --no-interaction --prefer-dist && composer check'
 ```
 
 Scripts do Composer:
